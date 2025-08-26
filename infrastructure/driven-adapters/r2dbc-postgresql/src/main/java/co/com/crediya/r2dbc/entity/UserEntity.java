@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Table("users")
@@ -25,5 +26,5 @@ public class UserEntity {
     private String identityDocument;
     private String phoneNumber;
     private Integer roleId;
-    private Double baseSalary;
+    private BigDecimal baseSalary;
 }

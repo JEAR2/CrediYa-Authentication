@@ -3,6 +3,7 @@ package co.com.crediya.api.user;
 import co.com.crediya.api.dtos.CreateUserDTO;
 import co.com.crediya.api.mapper.UserDTOMapper;
 import co.com.crediya.usecase.user.UserUseCase;
+import co.com.crediya.usecase.user.UserUseCasePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -17,7 +18,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserHandler {
 
-    private final UserUseCase userUseCase;
+    private final UserUseCasePort userUseCase;
     private final UserDTOMapper userDTOMapper;
     private final TransactionalOperator  transactionalOperator;
 

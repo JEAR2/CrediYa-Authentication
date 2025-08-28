@@ -1,15 +1,31 @@
 package co.com.crediya.api.config;
 
+import co.com.crediya.api.dtos.ResponseUserDTO;
+import co.com.crediya.api.mapper.UserDTOMapper;
 import co.com.crediya.api.user.UserHandler;
 import co.com.crediya.api.user.RouterRest;
+import co.com.crediya.model.user.User;
+import co.com.crediya.ports.TransactionManagement;
+import co.com.crediya.usecase.user.UserUseCase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.transaction.reactive.TransactionalOperator;
+import reactor.core.publisher.Mono;
 
-@ContextConfiguration(classes = {RouterRest.class, UserHandler.class})
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@ContextConfiguration(classes = {RouterRest.class, UserHandler.class, PathsConfig.class})
 @WebFluxTest
 @Import({CorsConfig.class, SecurityHeadersConfig.class})
 class ConfigTest {
@@ -17,10 +33,41 @@ class ConfigTest {
     @Autowired
     private WebTestClient webTestClient;
 
+    @MockitoBean
+    private TransactionManagement transactionManagement;
+
+    @MockitoBean
+    private UserUseCase userUseCase;
+
+    @MockitoBean
+    private UserDTOMapper userDTOMapper;
+
+    private final User user = User.builder()
+            .id("1")
+            .name("jear")
+            .lastName("acevedo")
+            .email("a@a.com")
+            .birthDate(LocalDate.now())
+            .address("dir")
+            .identityDocument("2323")
+            .phoneNumber("131231")
+            .roleId(1)
+            .baseSalary(new BigDecimal("12000.0"))
+            .build();
+
+    private final ResponseUserDTO userResponse = new ResponseUserDTO("1","juan","acevedo",new Date(),"dir","a@a.com","15486","2323",1,new BigDecimal("12000.0"));
+
+
+    @BeforeEach
+    void setUp() {
+        when(userUseCase.existsByEmail(user.getEmail())).thenReturn(Mono.just(true));
+        when( userDTOMapper.toResponseDTO(any()) ).thenReturn(userResponse);
+    }
+
     @Test
     void corsConfigurationShouldAllowOrigins() {
         webTestClient.get()
-                .uri("/api/usecase/path")
+                .uri("/api/v1/users/exists/{email}","a@a.com")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().valueEquals("Content-Security-Policy",

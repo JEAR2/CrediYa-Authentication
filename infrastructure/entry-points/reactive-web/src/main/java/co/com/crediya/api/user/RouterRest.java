@@ -1,6 +1,6 @@
 package co.com.crediya.api.user;
 
-import co.com.crediya.api.config.UserPath;
+import co.com.crediya.api.config.PathsConfig;
 import co.com.crediya.api.dtos.CreateUserDTO;
 import co.com.crediya.api.dtos.ResponseUserDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +26,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @RequiredArgsConstructor
 public class RouterRest {
 
-    private final UserPath userPath;
+    private final PathsConfig pathsConfig;
     private final UserHandler userHandler;
     @Bean
     @RouterOperations({
@@ -47,8 +47,8 @@ public class RouterRest {
             )
     })
     public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
-        return route(POST(userPath.getUsers()), this.userHandler::listenSaveUser)
-                .andRoute(GET("/api/v1/users/exists/{email}"), this.userHandler::listenFindByEmail);
+        return route(POST(pathsConfig.getUsers()), this.userHandler::listenSaveUser)
+                .andRoute(GET(pathsConfig.getEmailExists()), this.userHandler::listenFindByEmail);
     }
 
 

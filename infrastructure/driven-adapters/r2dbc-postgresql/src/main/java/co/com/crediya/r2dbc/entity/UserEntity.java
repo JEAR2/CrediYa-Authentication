@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Table("users")
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class UserEntity {
     private String id;
     private String name;
     private String lastName;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String address;
     private String email;
     private String identityDocument;

@@ -1,12 +1,12 @@
 package co.com.crediya.exceptions.enums;
 
 public enum ExceptionMessages {
-    FIELD_NAME_REQUIRED("El campo nombre es requerido"),
-    FIELD_LAST_NAME_REQUIRED("El campo apellido es requerido"),
-    FIELD_EMAIL_REQUIRED("El campo email es requerido"),
-    FIELD_EMAIL_NOT_VALID("El correo electrónico no es válido"),
-    FIELD_PAYMENT_OUT_RANGE("El salario base debe estar entre 0 y 1.500.000"),
-    USER_WITH_EMAIL_EXIST("Ya existe un usuario con el email %s registrado");
+    FIELD_NAME_REQUIRED("The name field is required."),
+    FIELD_LAST_NAME_REQUIRED("The last name field is required."),
+    FIELD_EMAIL_REQUIRED("The email field is required."),
+    FIELD_EMAIL_NOT_VALID("The email address is invalid."),
+    FIELD_PAYMENT_OUT_RANGE("The base salary must be between 0 and 1,500,000."),
+    USER_WITH_EMAIL_EXIST("There is already a user with the email address %s registered.");
 
     private final String message;
 

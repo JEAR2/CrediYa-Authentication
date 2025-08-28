@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Pragma Template API",
+                title = "Challenge CrediYa Users API",
                 version = "1.0.0",
-                description = "API for Pragma Template Application",
+                description = "API for Users Application",
                 contact = @Contact(
                         name = "Pragma Team",
                         email = "support@pragma.co",

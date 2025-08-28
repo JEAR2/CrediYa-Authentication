@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -17,7 +18,7 @@ public class User {
     String id;
     String name;
     String lastName;
-    Date birthDate;
+    LocalDate birthDate;
     String address;
     String email;
     String identityDocument;

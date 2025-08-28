@@ -26,6 +26,7 @@ cors:
 routes:
   paths:
     users: "/api/v1/users"
+    emailExists: "/api/v1/users/exists/{email}"
 
 adapters:
   r2dbc:

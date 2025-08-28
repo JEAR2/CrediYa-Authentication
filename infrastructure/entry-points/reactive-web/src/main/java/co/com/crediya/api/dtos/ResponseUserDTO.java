@@ -1,5 +1,6 @@
 package co.com.crediya.api.dtos;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public record ResponseUserDTO(String id,
@@ -11,5 +12,5 @@ public record ResponseUserDTO(String id,
                               String identityDocument,
                               String phoneNumber,
                               Integer roleId,
-                              Double baseSalary) {
+                              BigDecimal baseSalary) {
 }

@@ -4,8 +4,10 @@ import co.com.crediya.model.user.User;
 import co.com.crediya.model.user.gateways.UserRepository;
 import co.com.crediya.r2dbc.entity.UserEntity;
 import co.com.crediya.r2dbc.helper.ReactiveAdapterOperations;
+import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -15,11 +17,17 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         String,
         UserReactiveRepository
 > implements UserRepository {
-    public UserReactiveRepositoryAdapter(UserReactiveRepository repository, ObjectMapper mapper) {
+    public UserReactiveRepositoryAdapter(UserReactiveRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator) {
 
         super(repository, mapper, d -> mapper.map(d, User.class));
     }
 
+
+    @Override
+    public Mono<User> save(User user){
+        return repository.save(toData(user)).map(super::toEntity);
+
+    }
     @Override
     public Mono<User> findByEmail(String email) {
         return repository.findByEmail(email).map(super::toEntity);

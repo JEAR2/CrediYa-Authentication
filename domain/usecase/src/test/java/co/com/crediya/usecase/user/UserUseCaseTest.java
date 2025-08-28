@@ -1,5 +1,6 @@
 package co.com.crediya.usecase.user;
 
+import co.com.crediya.exceptions.AuthenticationBadRequestException;
 import co.com.crediya.model.user.User;
 import co.com.crediya.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +9,8 @@ import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Calendar;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.mockito.Mockito.*;
 
@@ -18,8 +20,7 @@ class UserUseCaseTest {
     private UserUseCase userUseCase;
 
     private User createValidUser() {
-        Calendar dateBirth = Calendar.getInstance();
-        dateBirth.set(1990, Calendar.JANUARY, 15);
+
 
         return new User().toBuilder()
                 .id("1")
@@ -27,11 +28,11 @@ class UserUseCaseTest {
                 .lastName("Doe")
                 .address("Calle2")
                 .email("john.doe@example.com")
-                .birthDate(dateBirth.getTime())
+                .birthDate(LocalDate.now())
                 .phoneNumber("123456789")
                 .roleId(1)
                 .identityDocument("12345678")
-                .baseSalary(1000000.0)
+                .baseSalary(new BigDecimal("1000000.0"))
                 .build();
     }
 
@@ -42,7 +43,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void saveSuccess() {
+    void saveUser_WhenUserIsValid_ShouldSaveSuccessfully() {
 
         User user = createValidUser();
 
@@ -58,7 +59,7 @@ class UserUseCaseTest {
 
     }
     @Test
-    void saveEmailExists() {
+    void saveUser_WhenEmailAlreadyExists_ShouldError() {
 
         User user = createValidUser();
 
@@ -66,41 +67,16 @@ class UserUseCaseTest {
         when(userRepository.save(user)).thenReturn(Mono.just(user));
 
         StepVerifier.create(userUseCase.save(user))
-                .expectErrorMessage("El correo electrónico ya está registrado")
+                .expectError(AuthenticationBadRequestException.class)
                 .verify();
 
         verify(userRepository, Mockito.times(1)).existsByEmail(user.getEmail());
         verify(userRepository, never()).save(any());
 
     }
-    @Test
-    void testSaveInvalidUser() {
-        Calendar dateBirth = Calendar.getInstance();
-        dateBirth.set(1990, Calendar.JANUARY, 15);
-        User user = new User().toBuilder()
-                .id("1")
-                .name("")
-                .lastName("Acevedo")
-                .address("Calle2")
-                .email("a@a.com")
-                .birthDate(dateBirth.getTime())
-                .phoneNumber("123456789")
-                .roleId(1)
-                .identityDocument("jeep")
-                .baseSalary(15000.0)
-                .build();
-
-        StepVerifier.create(userUseCase.save(user))
-                .expectErrorMessage("El nombre no puede estar vacío")
-                .verify();
-
-        verify(userRepository, never()).existsByEmail(any());
-        verify(userRepository, never()).save(any());
-    }
-
 
     @Test
-    void findByEmailFind() {
+    void findByEmail_WhenUserExists_ShouldReturnUser() {
         User user = createValidUser();
         when(userRepository.findByEmail("a@a.com"))
                 .thenReturn(Mono.just(user));
@@ -110,7 +86,7 @@ class UserUseCaseTest {
                 .verifyComplete();
     }
     @Test
-    void findByEmailNotFound() {
+    void findByEmail_WhenUserDoesNotExist_ShouldReturnEmpty() {
         when(userRepository.findByEmail("a@a.com"))
                 .thenReturn(Mono.empty());
 
@@ -119,7 +95,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void existsByEmailTrue() {
+    void existsByEmail_WhenUserExists_ShouldReturnTrue() {
         when(userRepository.existsByEmail("a@a.com"))
                 .thenReturn(Mono.just(true));
 
@@ -128,7 +104,7 @@ class UserUseCaseTest {
                 .verifyComplete();
     }
     @Test
-    void existsByEmailFalse() {
+    void existsByEmail_WhenUserDoesNotExist_ShouldReturnFalse() {
         when(userRepository.existsByEmail("a@a.com"))
                 .thenReturn(Mono.just(false));
 

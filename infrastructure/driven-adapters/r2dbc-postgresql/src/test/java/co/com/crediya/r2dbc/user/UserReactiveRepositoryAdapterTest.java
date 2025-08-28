@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import static org.mockito.Mockito.*;
@@ -43,7 +44,7 @@ class UserReactiveRepositoryAdapterTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .address("street")
-                .birthDate(dateBirth.getTime())
+                .birthDate(LocalDate.now())
                 .phoneNumber("312009212")
                 .baseSalary( new BigDecimal(10) )
                 .build();
@@ -54,7 +55,7 @@ class UserReactiveRepositoryAdapterTest {
                 .lastName("Doe")
                 .email("john@doe.com")
                 .address("street")
-                .birthDate(dateBirth.getTime())
+                .birthDate(LocalDate.now())
                 .phoneNumber("312009212")
                 .baseSalary( new BigDecimal(10) )
                 .build();

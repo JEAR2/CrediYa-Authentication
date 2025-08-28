@@ -2,7 +2,6 @@ package co.com.crediya.usecase.user;
 
 import co.com.crediya.exceptions.AuthenticationIllegalArgumentException;
 import co.com.crediya.exceptions.enums.ExceptionMessages;
-import co.com.crediya.exceptions.enums.ExceptionStatusCode;
 import co.com.crediya.model.user.User;
 import reactor.core.publisher.Mono;
 
@@ -15,7 +14,7 @@ public class UserValidator {
     private static final String REGEX_VALID_EMAIL = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
 
-    public static Mono<Void> validateUser(User user) {
+    public static Mono<User> validateUser(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             return Mono.error(new AuthenticationIllegalArgumentException(ExceptionMessages.FIELD_NAME_REQUIRED.getMessage()));
         }

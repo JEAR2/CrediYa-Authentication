@@ -7,14 +7,15 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-public record CreateUserDTO( @NotBlank String name,
-                             @NotBlank String lastName,
-                             @NotBlank String email,
+public record CreateUserDTO(@NotBlank(message = "is required.") String name,
+                            @NotBlank(message = "is required.") String lastName,
+                            @NotBlank(message = "is required.") @NotBlank String email,
                              LocalDate birthDate,
                              String address,
-                             String identityDocument,
+                            @NotBlank(message = "is required.") String identityDocument,
                              String phoneNumber,
                              Integer roleId,
-                             @NotNull @Min(0) @Max(15000000)  BigDecimal baseSalary) {
+                            @NotNull(message = "is required.")
+                            @Min( value = 1, message = "min value is 1")
+                            @Max( value = 15000000, message = "max value is 15000000")  BigDecimal baseSalary) {
 }

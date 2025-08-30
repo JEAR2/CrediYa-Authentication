@@ -49,6 +49,14 @@ class UserValidatorTest {
                 .verify();
     }
     @Test
+    void saveUser_WhenNameIsNull_ShouldError() {
+
+        createValidUser.setName(null);
+        StepVerifier.create(UserValidator.validateUser(createValidUser))
+                .expectError(AuthenticationIllegalArgumentException.class)
+                .verify();
+    }
+    @Test
     void saveUser_WhenLastNameIsEmpty_ShouldError() {
 
         createValidUser.setLastName("");
@@ -58,6 +66,16 @@ class UserValidatorTest {
     }
 
     @Test
+    void saveUser_WhenLastNameIsNull_ShouldError() {
+
+        createValidUser.setLastName(null);
+        StepVerifier.create(UserValidator.validateUser(createValidUser))
+                .expectError(AuthenticationIllegalArgumentException.class)
+                .verify();
+    }
+
+
+    @Test
     void saveUser_WhenEmailIsEmpty_ShouldError() {
 
         createValidUser.setEmail("");
@@ -65,11 +83,17 @@ class UserValidatorTest {
                 .expectError(AuthenticationIllegalArgumentException.class)
                 .verify();
     }
+    @Test
+    void saveUser_WhenEmailIsNull_ShouldError() {
+
+        createValidUser.setEmail(null);
+        StepVerifier.create(UserValidator.validateUser(createValidUser))
+                .expectError(AuthenticationIllegalArgumentException.class)
+                .verify();
+    }
 
     @Test
     void saveUser_WhenEmailIsInvalid_ShouldError() {
-        Calendar dateBirth = Calendar.getInstance();
-        dateBirth.set(1990, Calendar.JANUARY, 15);
         createValidUser.setEmail("aaa");
 
         StepVerifier.create(UserValidator.validateUser(createValidUser))
@@ -78,15 +102,42 @@ class UserValidatorTest {
     }
 
     @Test
+    void saveUser_WhenSalaryIsNull_ShouldError() {
+        createValidUser.setBaseSalary(null);
+
+        StepVerifier.create(UserValidator.validateUser(createValidUser))
+                .expectError(AuthenticationIllegalArgumentException.class)
+                .verify();
+    }
+
+    @Test
+    void saveUser_WhenSalaryIsZero_ShouldError() {
+        createValidUser.setBaseSalary(BigDecimal.ZERO);
+
+        StepVerifier.create(UserValidator.validateUser(createValidUser))
+                .expectError(AuthenticationIllegalArgumentException.class)
+                .verify();
+    }
+
+    @Test
+    void saveUser_WhenSalaryExceedsMax_ShouldError() {
+        createValidUser.setBaseSalary(new BigDecimal("15000000000000"));
+
+        StepVerifier.create(UserValidator.validateUser(createValidUser))
+                .expectError(AuthenticationIllegalArgumentException.class)
+                .verify();
+    }
+
+
+    @Test
     void saveUser_WhenSalaryIsInvalid_ShouldError() {
-        Calendar dateBirth = Calendar.getInstance();
-        dateBirth.set(1990, Calendar.JANUARY, 15);
         createValidUser.setBaseSalary(new BigDecimal("-1"));
 
         StepVerifier.create(UserValidator.validateUser(createValidUser))
                 .expectError(AuthenticationIllegalArgumentException.class)
                 .verify();
     }
+
 
 
 }

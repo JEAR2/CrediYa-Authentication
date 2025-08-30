@@ -41,7 +41,7 @@ public class RouterRest {
                     operation = @Operation( tags = "Users", operationId = "saveUser", description = "Save a user", summary = "Save a user",
                             requestBody = @RequestBody( content = @Content( schema = @Schema( implementation = CreateUserDTO.class ) ) ),
                             responses = { @ApiResponse( responseCode = "201", description = "User saved successfully.", content = @Content( schema = @Schema( implementation = ResponseUserDTO.class ) ) ),
-                                    //@ApiResponse( responseCode = "400", description = "Request body is not valid.", content = @Content( schema = @Schema( implementation = CustomError.class ) ) )
+
                             }
                     )
             )

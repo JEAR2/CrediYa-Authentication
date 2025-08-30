@@ -4,6 +4,8 @@ import co.com.crediya.api.config.PathsConfig;
 import co.com.crediya.api.dtos.CreateUserDTO;
 import co.com.crediya.api.dtos.ResponseUserDTO;
 import co.com.crediya.api.mapper.UserDTOMapper;
+import co.com.crediya.api.util.ValidatorUtil;
+import co.com.crediya.exceptions.enums.ExceptionStatusCode;
 import co.com.crediya.model.user.User;
 import co.com.crediya.ports.TransactionManagement;
 import co.com.crediya.usecase.user.UserUseCase;
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {RouterRest.class, UserHandler.class})
+@ContextConfiguration(classes = {RouterRest.class, UserHandler.class, ValidatorUtil.class})
 @EnableConfigurationProperties(PathsConfig.class)
 @WebFluxTest
 class RouterRestTest {
@@ -94,8 +96,7 @@ class RouterRestTest {
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
-                .jsonPath("$.success").isEqualTo(true)
-                .jsonPath("$.statusCode").isEqualTo(201)
+                .jsonPath("$.code").isEqualTo(ExceptionStatusCode.CREATED.getStatus())
                 .jsonPath("$.data.email")
                 .value(userResponseResult -> {
                             Assertions.assertThat(userResponseResult).isNotNull();

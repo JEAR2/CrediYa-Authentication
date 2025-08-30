@@ -20,7 +20,7 @@ import java.util.Calendar;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserReactiveRepositoryAdapterTest {
+class RoleReactiveRepositoryAdapterTest {
 
     @InjectMocks
     UserReactiveRepositoryAdapter userReactiveRepositoryAdapter;

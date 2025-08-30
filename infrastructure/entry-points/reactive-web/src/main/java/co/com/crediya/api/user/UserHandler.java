@@ -6,6 +6,7 @@ import co.com.crediya.api.util.HandlersResponseUtil;
 import co.com.crediya.api.util.ValidatorUtil;
 import co.com.crediya.exceptions.enums.ExceptionStatusCode;
 import co.com.crediya.ports.TransactionManagement;
+import co.com.crediya.usecase.role.ValidateRoleUseCasePort;
 import co.com.crediya.usecase.user.UserUseCasePort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.net.URI;
 public class UserHandler {
 
     private final UserUseCasePort userUseCase;
+    private final ValidateRoleUseCasePort  validateRoleUseCase;
     private final UserDTOMapper userDTOMapper;
     private final TransactionManagement transactionManagement;
     private final ValidatorUtil validatorUtil;
@@ -31,10 +33,16 @@ public class UserHandler {
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(CreateUserDTO.class)
                 .flatMap( validatorUtil::validate )
-                .flatMap(dto -> {
-                    var user = userDTOMapper.toModel(dto);
-                    return transactionManagement.inTransaction(userUseCase.save(user));
-                })
+                .flatMap(dto ->
+                    validateRoleUseCase.findByName(dto.roleName())
+                            .map(role -> {
+                                var user = userDTOMapper.toModel(dto);
+                                user.setRole(role);
+                                return user;
+                            }))
+                .flatMap(user->
+                        transactionManagement.inTransaction(userUseCase.save(user))
+                )
                 .map(userDTOMapper::toResponseDTO)
                 .flatMap( savedUser ->
                         ServerResponse.created(URI.create(""))

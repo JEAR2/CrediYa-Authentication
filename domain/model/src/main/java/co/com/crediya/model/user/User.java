@@ -1,4 +1,5 @@
 package co.com.crediya.model.user;
+import co.com.crediya.model.role.Role;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class User {
     String email;
     String identityDocument;
     String phoneNumber;
-    Integer roleId;
     BigDecimal baseSalary;
+    Role role;
 
 }

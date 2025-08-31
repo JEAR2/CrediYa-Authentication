@@ -1,11 +1,15 @@
 package co.com.crediya.api.user;
 
+import co.com.crediya.api.dtos.AuthRequestDTO;
+import co.com.crediya.api.dtos.AuthResponseDTO;
 import co.com.crediya.api.dtos.CreateUserDTO;
 import co.com.crediya.api.mapper.UserDTOMapper;
 import co.com.crediya.api.util.HandlersResponseUtil;
 import co.com.crediya.api.util.ValidatorUtil;
+import co.com.crediya.securityports.JwtPort;
 import co.com.crediya.exceptions.enums.ExceptionStatusCode;
 import co.com.crediya.ports.TransactionManagement;
+import co.com.crediya.usecase.auth.LoginUseCase;
 import co.com.crediya.usecase.role.ValidateRoleUseCasePort;
 import co.com.crediya.usecase.user.UserUseCasePort;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,8 @@ public class UserHandler {
     private final UserDTOMapper userDTOMapper;
     private final TransactionManagement transactionManagement;
     private final ValidatorUtil validatorUtil;
+    private final LoginUseCase loginUseCase;
+    private final JwtPort jwtPort;
 
 
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
@@ -60,5 +66,16 @@ public class UserHandler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(exists));
     }
+
+    public Mono<ServerResponse> login(ServerRequest request) {
+        return request.bodyToMono(AuthRequestDTO.class)
+                .flatMap(dto -> loginUseCase.login(dto.getEmail(), dto.getPassword()))
+                .map(user -> new AuthResponseDTO(user, jwtPort.generateToken(user.getEmail(),user.getRole().getName())))
+                .flatMap(response -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(response));
+    }
+
+
 
 }

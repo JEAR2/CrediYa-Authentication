@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class RoleEntity {
     @Id
     @Column("role_id")
-    private String id;
+    private Integer id;
     private String name;
     private String description;
 

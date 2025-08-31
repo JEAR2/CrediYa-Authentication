@@ -10,4 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class PathsConfig {
     private String users;
     private String emailExists;
+    private String login;
 }

@@ -27,6 +27,7 @@ routes:
   paths:
     users: "/api/v1/users"
     emailExists: "/api/v1/users/exists/{email}"
+    login: "/api/v1/users/login"
 
 adapters:
   r2dbc:
@@ -44,3 +45,8 @@ adapters:
     #    mode: always
     #flyway:
     #  enabled: false
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:3Y8vRj2fA9kQm7XsZ5bW1tGeLhKdN0qCp4yUoFnJxVrTiHaM6zEcSbDgPwXrQvTy}
+    expiration: 3600000

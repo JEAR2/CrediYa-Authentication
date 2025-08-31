@@ -48,7 +48,8 @@ public class RouterRest {
     })
     public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
         return route(POST(pathsConfig.getUsers()), this.userHandler::listenSaveUser)
-                .andRoute(GET(pathsConfig.getEmailExists()), this.userHandler::listenFindByEmail);
+                .andRoute(GET(pathsConfig.getEmailExists()), this.userHandler::listenFindByEmail)
+                .andRoute(POST(pathsConfig.getLogin()), this.userHandler::login);
     }
 
 

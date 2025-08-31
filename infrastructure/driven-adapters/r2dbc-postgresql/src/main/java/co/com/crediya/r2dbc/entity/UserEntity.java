@@ -27,4 +27,5 @@ public class UserEntity {
     private String phoneNumber;
     private Integer roleId;
     private BigDecimal baseSalary;
+    private String password;
 }

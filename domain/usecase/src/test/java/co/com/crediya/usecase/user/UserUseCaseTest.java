@@ -1,8 +1,10 @@
 package co.com.crediya.usecase.user;
 
 import co.com.crediya.exceptions.AuthenticationBadRequestException;
+import co.com.crediya.model.role.Role;
 import co.com.crediya.model.user.User;
 import co.com.crediya.model.user.gateways.UserRepository;
+import co.com.crediya.securityports.PasswordEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 class UserUseCaseTest {
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
     private UserUseCase userUseCase;
 
     private User createValidUser() {
@@ -30,7 +33,7 @@ class UserUseCaseTest {
                 .email("john.doe@example.com")
                 .birthDate(LocalDate.now())
                 .phoneNumber("123456789")
-                .roleId(1)
+                .role(new Role("1","ADMIN","Description"))
                 .identityDocument("12345678")
                 .baseSalary(new BigDecimal("1000000.0"))
                 .build();
@@ -39,23 +42,29 @@ class UserUseCaseTest {
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userUseCase = new UserUseCase(userRepository);
+        passwordEncoder = Mockito.mock(PasswordEncoder.class);
+        userUseCase = new UserUseCase(userRepository,passwordEncoder);
     }
 
     @Test
     void saveUser_WhenUserIsValid_ShouldSaveSuccessfully() {
 
         User user = createValidUser();
+        User userWithHashedPassword = user.toBuilder().password("hashed1234").build();
 
+        // Mock de repositorio
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(Mono.just(false));
-        when(userRepository.save(user)).thenReturn(Mono.just(user));
+        when(userRepository.save(any(User.class))).thenReturn(Mono.just(userWithHashedPassword));
+
+        // Mock de passwordEncoder
+        when(passwordEncoder.encode(user.getPassword())).thenReturn(Mono.just("hashed1234"));
 
         StepVerifier.create(userUseCase.save(user))
-                .expectNext(user)
+                .expectNext(userWithHashedPassword)
                 .verifyComplete();
 
-        verify(userRepository, Mockito.times(1)).existsByEmail(user.getEmail());
-        verify(userRepository, Mockito.times(1)).save(user);
+        verify(userRepository, times(1)).existsByEmail(user.getEmail());
+        verify(userRepository, times(1)).save(any(User.class));
 
     }
     @Test

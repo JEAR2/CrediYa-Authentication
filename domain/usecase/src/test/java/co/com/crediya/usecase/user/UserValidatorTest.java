@@ -1,18 +1,24 @@
 package co.com.crediya.usecase.user;
 
 import co.com.crediya.exceptions.AuthenticationIllegalArgumentException;
+import co.com.crediya.model.role.Role;
 import co.com.crediya.model.user.User;
+import co.com.crediya.securityports.PasswordEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Calendar;
 
+import static org.mockito.Mockito.when;
+
 class UserValidatorTest {
 
     private User createValidUser;
+    private PasswordEncoder passwordEncoder;
     @BeforeEach
     void setUp() {
         Calendar dateBirth = Calendar.getInstance();
@@ -25,10 +31,12 @@ class UserValidatorTest {
                 .email("john.doe@example.com")
                 .birthDate(LocalDate.now())
                 .phoneNumber("123456789")
-                .roleId(1)
+                .role(new Role().toBuilder().id("ROLE_ADMIN").build())
                 .identityDocument("12345678")
                 .baseSalary(new BigDecimal("1000000.0"))
                 .build();
+
+
     }
 
 

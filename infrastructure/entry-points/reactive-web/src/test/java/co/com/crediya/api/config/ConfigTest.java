@@ -5,8 +5,12 @@ import co.com.crediya.api.mapper.UserDTOMapper;
 import co.com.crediya.api.user.UserHandler;
 import co.com.crediya.api.user.RouterRest;
 import co.com.crediya.api.util.ValidatorUtil;
+import co.com.crediya.model.role.Role;
 import co.com.crediya.model.user.User;
 import co.com.crediya.ports.TransactionManagement;
+import co.com.crediya.securityports.JwtPort;
+import co.com.crediya.usecase.auth.LoginUseCase;
+import co.com.crediya.usecase.role.ValidateRoleUseCasePort;
 import co.com.crediya.usecase.user.UserUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +20,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -35,6 +38,9 @@ class ConfigTest {
     private WebTestClient webTestClient;
 
     @MockitoBean
+    private ValidateRoleUseCasePort validateRoleUseCasePort;
+
+    @MockitoBean
     private TransactionManagement transactionManagement;
 
     @MockitoBean
@@ -42,6 +48,14 @@ class ConfigTest {
 
     @MockitoBean
     private UserDTOMapper userDTOMapper;
+
+    @MockitoBean
+    private LoginUseCase loginUseCase;
+
+    @MockitoBean
+    private JwtPort jwtPort;
+
+
 
     private final User user = User.builder()
             .id("1")
@@ -52,7 +66,7 @@ class ConfigTest {
             .address("dir")
             .identityDocument("2323")
             .phoneNumber("131231")
-            .roleId(1)
+            .role(new Role("1","ADMIN","Description"))
             .baseSalary(new BigDecimal("12000.0"))
             .build();
 
@@ -61,8 +75,11 @@ class ConfigTest {
 
     @BeforeEach
     void setUp() {
+        Role role = new Role("1", "ROLE_ADMIN", "description");
         when(userUseCase.existsByEmail(user.getEmail())).thenReturn(Mono.just(true));
         when( userDTOMapper.toResponseDTO(any()) ).thenReturn(userResponse);
+        when(validateRoleUseCasePort.findByName("ROLE_ADMIN"))
+                .thenReturn(Mono.just(role));
     }
 
     @Test

@@ -25,8 +25,9 @@ public class UserMapperTest {
             "Dir",
             "10900122",
             "210012312",
-            1,
-            BigDecimal.TEN
+            "ROLE_ADMIN",
+            BigDecimal.TEN,
+            "12345"
     );
 
     private final User user = User.builder().
@@ -36,6 +37,7 @@ public class UserMapperTest {
             .identityDocument("10900122")
             .phoneNumber("210012312")
             .baseSalary(BigDecimal.TEN)
+            .password("3123123123")
             .build();
 
     @Test

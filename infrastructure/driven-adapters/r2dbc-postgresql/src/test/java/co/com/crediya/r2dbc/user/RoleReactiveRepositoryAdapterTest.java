@@ -1,7 +1,10 @@
 package co.com.crediya.r2dbc.user;
 
+import co.com.crediya.model.role.Role;
+import co.com.crediya.model.role.gateways.RoleRepository;
 import co.com.crediya.model.user.User;
 import co.com.crediya.r2dbc.entity.UserEntity;
+import co.com.crediya.r2dbc.mappers.UserEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,12 +32,17 @@ class RoleReactiveRepositoryAdapterTest {
     UserReactiveRepository userRepository;
 
     @Mock
-    ObjectMapper mapper;
+    private RoleRepository roleRepository;
+
+
+    @Mock
+    private UserEntityMapper userEntityMapper;
+
 
     private User user;
 
     private UserEntity userEntityOne;
-
+    private Role role;
     @BeforeEach
     void setUp() {
         Calendar dateBirth = Calendar.getInstance();
@@ -60,16 +68,18 @@ class RoleReactiveRepositoryAdapterTest {
                 .baseSalary( new BigDecimal(10) )
                 .build();
 
-
+        role = new Role("1", "ADMIN","Description");
     }
 
     @Test
     @DisplayName("Must save user successfully")
     void saveUserWhenUserCorrect_ShouldSavedUser() {
         // Arrange
+        when(userEntityMapper.toEntity(user)).thenReturn(userEntityOne);
+        when(userEntityMapper.toDomain(userEntityOne)).thenReturn(user);
         when(userRepository.save(userEntityOne)).thenReturn(Mono.just(userEntityOne));
-        when(mapper.map(userEntityOne, User.class)).thenReturn(user);
-        when(mapper.map(user, UserEntity.class)).thenReturn(userEntityOne);
+        when(roleRepository.findById(any())).thenReturn(Mono.just(role));
+
         // Act
         Mono<User> result = userReactiveRepositoryAdapter.save(user);
         // Assert
@@ -84,12 +94,14 @@ class RoleReactiveRepositoryAdapterTest {
         when(userRepository.findByEmail( userEntityOne.getEmail() ))
                 .thenReturn( Mono.just(userEntityOne) );
 
-        when(mapper.map(userEntityOne, User.class)).thenReturn(user);
+        when(userEntityMapper.toDomain(userEntityOne)).thenReturn(user);
+        when(roleRepository.findById(any())).thenReturn(Mono.just(role));
+
         // Act
         Mono<User> result = userReactiveRepositoryAdapter.findByEmail(userEntityOne.getEmail());
         // Assert
         StepVerifier.create(result)
-                .expectNextMatches( userFound -> userFound.getEmail().equals(user.getEmail()) )
+                .expectNextMatches(savedUser -> savedUser.getRole().getName().equals("ADMIN"))
                 .verifyComplete();
     }
 

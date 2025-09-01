@@ -29,7 +29,7 @@ public class RouterRest {
     private final PathsConfig pathsConfig;
     private final UserHandler userHandler;
     @Bean
-    @RouterOperations({
+   /* @RouterOperations({
             @RouterOperation(
                     path = "/api/v1/users",
                     produces = {
@@ -45,6 +45,12 @@ public class RouterRest {
                             }
                     )
             )
+    })*/
+    @RouterOperations({
+            @RouterOperation(path = "/api/v1/users", produces = {MediaType.APPLICATION_JSON_VALUE,}, method = RequestMethod.POST, beanClass = UserHandler.class, beanMethod = "listenSaveUser"),
+            @RouterOperation(path = "/api/v1/users/login", produces = {MediaType.APPLICATION_JSON_VALUE,}, method = RequestMethod.POST, beanClass = UserHandler.class, beanMethod = "login")
+
+
     })
     public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
         return route(POST(pathsConfig.getUsers()), this.userHandler::listenSaveUser)

@@ -33,8 +33,8 @@ public class SecurityConfigAuth {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll()
+                        .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui.html/**", "/webjars/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ASESOR")
-                        //.pathMatchers(HttpMethod.POST, "/api/v1/loans").hasRole("CLIENTE")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

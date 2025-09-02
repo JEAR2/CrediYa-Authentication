@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
@@ -44,29 +45,44 @@ private final ObjectMapper objectMapper;
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        return Mono.just(exchange.getResponse())
-                .map(response -> {
-                    response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                    return response;
-                }).flatMap(response -> {
-                    if (ex instanceof AuthenticationException authenticationException) {
-                        log.warn("Authentication Exception: {}", authenticationException.getMessage());
-                        return buildFailureResponse(exchange, HttpStatus.resolve(authenticationException.getStatus()), HandlersResponseUtil.buildBodyFailureResponse(
-                                authenticationException.getStatusCode().getStatus(), authenticationException.getMessage(), null
-                        ));
-                    }
-                    if (ex instanceof ConstraintViolationException fieldValidationException) {
-                        log.warn("Fields invalid Exception: {}", fieldValidationException.getMessage());
-                        return toListErrors(fieldValidationException.getConstraintViolations())
-                                .flatMap(fieldErrors -> buildFailureResponse(exchange, HttpStatus.BAD_REQUEST, HandlersResponseUtil.buildBodyFailureResponse(
-                                        ExceptionStatusCode.FIELDS_BAD_REQUEST.getStatus(), "Request invalid fields", fieldErrors
-                                )));
-                    }
-                    log.error("Internal Server Error", ex);
-                    return buildFailureResponse(exchange, HttpStatus.INTERNAL_SERVER_ERROR,
-                            HandlersResponseUtil.buildBodyFailureResponse(ExceptionStatusCode.INTERNAL_SERVER_ERROR.getStatus(), "Internal Server Error", null)
-                    );
-                });
+            return Mono.error(ex)
+                    .onErrorResume(AuthenticationException.class, authEx -> {
+                        log.warn("Authentication Exception: {}", authEx.getMessage());
+                        return buildFailureResponse(
+                                exchange,
+                                HttpStatus.resolve(authEx.getStatus()),
+                                HandlersResponseUtil.buildBodyFailureResponse(
+                                        authEx.getStatusCode().getStatus(),
+                                        authEx.getMessage(),
+                                        null
+                                )
+                        );
+                    })
+                    .onErrorResume(ConstraintViolationException.class, validationEx -> {
+                        log.warn("Fields invalid Exception: {}", validationEx.getMessage());
+                        return toListErrors(validationEx.getConstraintViolations())
+                                .flatMap(fieldErrors -> buildFailureResponse(
+                                        exchange,
+                                        HttpStatus.BAD_REQUEST,
+                                        HandlersResponseUtil.buildBodyFailureResponse(
+                                                ExceptionStatusCode.FIELDS_BAD_REQUEST.getStatus(),
+                                                "Request invalid fields",
+                                                fieldErrors
+                                        )
+                                ));
+                    }).then()
+                    .onErrorResume(e -> {
+                        log.error("Internal Server Error", e);
+                        return buildFailureResponse(
+                                exchange,
+                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                HandlersResponseUtil.buildBodyFailureResponse(
+                                        ExceptionStatusCode.INTERNAL_SERVER_ERROR.getStatus(),
+                                        "Internal Server Error",
+                                        null
+                                )
+                        );
+                    });
     }
 
     private Mono<List<String>> toListErrors(Set<ConstraintViolation<?>> violations) {

@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.reactivecommons.utils.ObjectMapper;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -30,14 +29,11 @@ class RoleReactiveRepositoryAdapterTest {
     @Mock
     private ObjectMapper objectMapper;
 
-    @Mock
-    private RoleRepository roleRepository;
-
     @InjectMocks
     private RoleReactiveRepositoryAdapter roleReactiveRepositoryAdapter;
 
     @Test
-    void findById_WhenRoleExists_ShouldReturnMappedEntity() {
+    void findById_WhenRoleExists_ShouldReturnMappedRole() {
         // Arrange
         RoleEntity entity = new RoleEntity(1, "ADMIN", "Admin role");
         Role role = new Role("1", "ADMIN", "Admin role");
@@ -49,10 +45,59 @@ class RoleReactiveRepositoryAdapterTest {
         StepVerifier.create(roleReactiveRepositoryAdapter.findById(1))
                 .expectNextMatches(found ->
                         found.getId().equals(role.getId()) &&
-                                found.getName().equals(role.getName()))
+                                found.getName().equals(role.getName()) &&
+                                found.getDescription().equals(role.getDescription())
+                )
                 .verifyComplete();
 
         verify(roleReactiveRepository, times(1)).findById("1");
         verify(objectMapper, times(1)).map(entity, Role.class);
+    }
+
+    @Test
+    void findById_WhenRoleDoesNotExist_ShouldReturnEmptyMono() {
+        // Arrange
+        when(roleReactiveRepository.findById("2")).thenReturn(Mono.empty());
+
+        // Act + Assert
+        StepVerifier.create(roleReactiveRepositoryAdapter.findById(2))
+                .expectNextCount(0)
+                .verifyComplete();
+
+        verify(roleReactiveRepository, times(1)).findById("2");
+        verifyNoInteractions(objectMapper); // ObjectMapper no se debe llamar
+    }
+
+    @Test
+    void findByName_WhenRoleExists_ShouldReturnRole() {
+        // Arrange
+        RoleEntity entity = new RoleEntity(1, "ADMIN", "Admin role");
+        Role expectedRole = new Role("1", "ADMIN", "Admin role");
+        when(objectMapper.map(entity, Role.class)).thenReturn(expectedRole);
+        when(roleReactiveRepository.findByName("ADMIN")).thenReturn(Mono.just(entity));
+
+        // Act + Assert
+        StepVerifier.create(roleReactiveRepositoryAdapter.findByName("ADMIN"))
+                .expectNextMatches(role ->
+                        role.getId().equals(expectedRole.getId()) &&
+                                role.getName().equals(expectedRole.getName()) &&
+                                role.getDescription().equals(expectedRole.getDescription())
+                )
+                .verifyComplete();
+
+        verify(roleReactiveRepository, times(1)).findByName("ADMIN");
+    }
+
+    @Test
+    void findByName_WhenRoleDoesNotExist_ShouldReturnEmptyMono() {
+        // Arrange
+        when(roleReactiveRepository.findByName("UNKNOWN")).thenReturn(Mono.empty());
+
+        // Act + Assert
+        StepVerifier.create(roleReactiveRepositoryAdapter.findByName("UNKNOWN"))
+                .expectNextCount(0)
+                .verifyComplete();
+
+        verify(roleReactiveRepository, times(1)).findByName("UNKNOWN");
     }
 }

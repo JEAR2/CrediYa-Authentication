@@ -86,11 +86,13 @@ public class UserHandler {
     public Mono<ServerResponse> login(ServerRequest request) {
         return request.bodyToMono(AuthRequestDTO.class)
                 .flatMap(dto -> loginUseCase.login(dto.getEmail(), dto.getPassword()))
-                .map(user -> new AuthResponseDTO(user, jwtPort.generateToken(user.getEmail(),user.getRole().getName())))
+                .flatMap(user -> jwtPort.generateToken(user.getEmail(), user.getRole().getName())
+                        .map(token -> new AuthResponseDTO(user, token)))
                 .flatMap(response -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(response));
     }
+
 
 
 

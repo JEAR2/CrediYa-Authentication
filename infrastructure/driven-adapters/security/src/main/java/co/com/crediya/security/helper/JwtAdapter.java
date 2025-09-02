@@ -1,10 +1,11 @@
-package co.com.crediya.r2dbc.helper.security;
+package co.com.crediya.security.helper;
 
 import co.com.crediya.securityports.JwtPort;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -18,26 +19,24 @@ public class JwtAdapter implements JwtPort {
     private final RSAPublicKey publicKey;
 
     @Override
-    public String generateToken(String email, String role) {
-        return Jwts.builder()
+    public Mono<String> generateToken(String email, String role) {
+        return Mono.fromCallable(() ->Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000)) // 15 minutos
                 .signWith(privateKey, SignatureAlgorithm.RS256)
-                .compact();
+                .compact());
     }
 
     @Override
-    public boolean validateToken(String token) {
-        try {
+    public Mono<Boolean> validateToken(String token) {
+        return Mono.fromCallable(() -> {
             Jwts.parserBuilder()
                     .setSigningKey(publicKey)
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-            return false;
-        }
+        }).onErrorReturn(false);
     }
 }

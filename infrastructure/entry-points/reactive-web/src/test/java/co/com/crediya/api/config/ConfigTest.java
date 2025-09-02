@@ -70,7 +70,7 @@ class ConfigTest {
             .baseSalary(new BigDecimal("12000.0"))
             .build();
 
-    private final ResponseUserDTO userResponse = new ResponseUserDTO("1","juan","acevedo",new Date(),"dir","a@a.com","15486","2323",1,new BigDecimal("12000.0"));
+    private final ResponseUserDTO userResponse = new ResponseUserDTO("juan","acevedo",new Date(),"dir","a@a.com","15486","2323",new BigDecimal("12000.0"));
 
 
     @BeforeEach

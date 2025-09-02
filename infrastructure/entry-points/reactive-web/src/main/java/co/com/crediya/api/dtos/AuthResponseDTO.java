@@ -2,7 +2,6 @@ package co.com.crediya.api.dtos;
 
 import co.com.crediya.model.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

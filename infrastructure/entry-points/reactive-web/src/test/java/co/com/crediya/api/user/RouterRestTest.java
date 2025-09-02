@@ -1,6 +1,7 @@
 package co.com.crediya.api.user;
 
 import co.com.crediya.api.config.PathsConfig;
+import co.com.crediya.api.dtos.AuthRequestDTO;
 import co.com.crediya.api.dtos.CreateUserDTO;
 import co.com.crediya.api.dtos.ResponseUserDTO;
 import co.com.crediya.api.mapper.UserDTOMapper;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -84,7 +86,7 @@ class RouterRestTest {
             .baseSalary(new BigDecimal("12000.0"))
             .build();
 
-    private final ResponseUserDTO userResponse = new ResponseUserDTO("1","juan","acevedo",new Date(),"dir","a@a.com","15486","2323",1,new BigDecimal("12000.0"));
+    private final ResponseUserDTO userResponse = new ResponseUserDTO("juan","acevedo",new Date(),"dir","a@a.com","15486","2323",new BigDecimal("12000.0"));
 
     @BeforeEach
     void setupMocks() {
@@ -126,5 +128,31 @@ class RouterRestTest {
                         }
                 );
     }
+
+    @Test
+    @DisplayName("Login exitoso debe retornar usuario y token")
+    void login_WhenCredentialsAreValid_ShouldReturnUserAndToken() {
+        // Arrange
+        AuthRequestDTO loginRequest = new AuthRequestDTO("a@a.com", "12345");
+        String fakeToken = "jwt-token";
+
+        when(loginUseCase.login(loginRequest.getEmail(), loginRequest.getPassword()))
+                .thenReturn(Mono.just(user));
+
+        when(jwtPort.generateToken(user.getEmail(), user.getRole().getName()))
+                .thenReturn(Mono.just(fakeToken));
+
+        // Act & Assert
+        webTestClient.post()
+                .uri(USERS_PATH_LOGIN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(loginRequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.email").isEqualTo(user.getEmail())
+                .jsonPath("$.token").isEqualTo(fakeToken);
+    }
+
 
 }

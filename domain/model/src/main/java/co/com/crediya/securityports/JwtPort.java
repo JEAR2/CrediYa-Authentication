@@ -1,6 +1,8 @@
 package co.com.crediya.securityports;
 
+import reactor.core.publisher.Mono;
+
 public interface JwtPort {
-    String generateToken(String email, String role);
-    boolean validateToken(String token);
+    Mono<String> generateToken(String email, String role);
+    Mono<Boolean> validateToken(String token);
 }

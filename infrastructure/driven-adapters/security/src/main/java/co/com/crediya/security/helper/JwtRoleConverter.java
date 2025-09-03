@@ -1,5 +1,6 @@
 package co.com.crediya.security.helper;
 
+import co.com.crediya.security.enums.SecurityConstants;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,10 +15,10 @@ public class JwtRoleConverter implements Converter<Jwt, Collection<GrantedAuthor
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
-        String role = jwt.getClaimAsString("role");
+        String role = jwt.getClaimAsString(SecurityConstants.ROLE_CLAIM.getValue());
         if (role == null) {
             return List.of();
         }
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+        return List.of(new SimpleGrantedAuthority(SecurityConstants.PREFIX_ROLE_AUTH.getValue() + role.toUpperCase()));
     }
 }

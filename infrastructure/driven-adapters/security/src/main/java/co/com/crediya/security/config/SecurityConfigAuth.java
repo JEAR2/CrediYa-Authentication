@@ -1,6 +1,9 @@
 package co.com.crediya.security.config;
 
+import co.com.crediya.security.exception.handler.AccessDeniedExceptionHandler;
+import co.com.crediya.security.exception.handler.UnauthorizedExceptionHandler;
 import co.com.crediya.security.helper.JwtRoleConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -18,14 +21,12 @@ import java.util.Collection;
 
 @Configuration
 @EnableWebFluxSecurity
+@RequiredArgsConstructor
 public class SecurityConfigAuth {
 
     private final JwtRoleConverter jwtRoleConverter;
-
-
-    public SecurityConfigAuth(JwtRoleConverter jwtRoleConverter) {
-        this.jwtRoleConverter = jwtRoleConverter;
-    }
+    private final UnauthorizedExceptionHandler unauthorizedExceptionHandler;
+    private final AccessDeniedExceptionHandler accessDeniedExceptionHandler;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -34,11 +35,17 @@ public class SecurityConfigAuth {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll()
                         .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui.html/**", "/webjars/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ASESOR")
+                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ADVISER")
                         .anyExchange().authenticated()
                 )
+                /*.exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(accessDeniedExceptionHandler)
+                        .authenticationEntryPoint(unauthorizedExceptionHandler)
+                )*/
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(grantedAuthoritiesExtractor()))
+                                .authenticationEntryPoint(unauthorizedExceptionHandler)
+                                .accessDeniedHandler(accessDeniedExceptionHandler)
                 )
                 .build();
     }

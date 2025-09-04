@@ -77,6 +77,14 @@ public class UserHandler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(exists));
     }
+    public Mono<ServerResponse> listenFindUserByEmail(ServerRequest request) {
+        String email = request.pathVariable("email");
+
+        return userUseCase.findByEmail(email)
+                .flatMap(user -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(user));
+    }
 
     @Operation( tags = "Users", operationId = "saveUser", description = "Login  user", summary = "Login user",
             requestBody = @RequestBody( content = @Content( schema = @Schema( implementation = AuthRequestDTO.class ) ) ),

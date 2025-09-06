@@ -26,7 +26,7 @@ public class UserMapperTest {
             "10900122",
             "210012312",
             "ROLE_ADMIN",
-            BigDecimal.TEN,
+            152000.0,
             "12345"
     );
 
@@ -36,7 +36,7 @@ public class UserMapperTest {
             .email("arevalo@gmail.com")
             .identityDocument("10900122")
             .phoneNumber("210012312")
-            .baseSalary(BigDecimal.TEN)
+            .baseSalary(152000.0)
             .password("3123123123")
             .build();
 

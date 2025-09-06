@@ -24,7 +24,7 @@ public class User {
     String email;
     String identityDocument;
     String phoneNumber;
-    BigDecimal baseSalary;
+    Double baseSalary;
     Role role;
     String password;
 

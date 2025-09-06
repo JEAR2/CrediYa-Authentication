@@ -5,12 +5,11 @@ import co.com.crediya.exceptions.enums.ExceptionMessages;
 import co.com.crediya.model.user.User;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
 
 public class UserValidator {
 
-    private static final BigDecimal MIN_VALUE_BASE_PAYMENT = BigDecimal.ZERO;
-    private static final BigDecimal MAX_VALUE_BASE_PAYMENT = BigDecimal.valueOf(15000000);
+    private static final Double MIN_VALUE_BASE_PAYMENT = 0.0;
+    private static final Double MAX_VALUE_BASE_PAYMENT = 15000000.0;
     private static final String REGEX_VALID_EMAIL = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
 

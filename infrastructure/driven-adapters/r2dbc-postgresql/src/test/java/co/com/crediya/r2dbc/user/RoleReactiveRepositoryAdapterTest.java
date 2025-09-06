@@ -54,7 +54,7 @@ class RoleReactiveRepositoryAdapterTest {
                 .address("street")
                 .birthDate(LocalDate.now())
                 .phoneNumber("312009212")
-                .baseSalary( new BigDecimal(10) )
+                .baseSalary( 12000.0)
                 .build();
 
         userEntityOne = UserEntity.builder()
@@ -65,7 +65,7 @@ class RoleReactiveRepositoryAdapterTest {
                 .address("street")
                 .birthDate(LocalDate.now())
                 .phoneNumber("312009212")
-                .baseSalary( new BigDecimal(10) )
+                .baseSalary( 12000.0 )
                 .build();
 
         role = new Role("1", "ADMIN","Description");

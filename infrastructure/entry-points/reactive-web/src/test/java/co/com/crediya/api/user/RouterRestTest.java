@@ -70,7 +70,7 @@ class RouterRestTest {
     @Autowired
     private PathsConfig pathsConfig;
 
-    private final CreateUserDTO createUserDTO = new CreateUserDTO("John","Acevedo","a@a.com", LocalDate.now(),"dir","12","3123","ROLE_ADMIN",new BigDecimal(15000.0), "12345");
+    private final CreateUserDTO createUserDTO = new CreateUserDTO("John","Acevedo","a@a.com", LocalDate.now(),"dir","12","3123","ROLE_ADMIN",15000.0, "12345");
 
 
     private final User user = User.builder()
@@ -83,7 +83,7 @@ class RouterRestTest {
             .identityDocument("2323")
             .phoneNumber("131231")
             .role(new Role("1","ADMIN","Description"))
-            .baseSalary(new BigDecimal("12000.0"))
+            .baseSalary(12000.0)
             .build();
 
     private final ResponseUserDTO userResponse = new ResponseUserDTO("juan","acevedo",new Date(),"dir","a@a.com","15486","2323",new BigDecimal("12000.0"));

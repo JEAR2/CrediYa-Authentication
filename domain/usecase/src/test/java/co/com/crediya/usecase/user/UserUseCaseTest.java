@@ -35,7 +35,7 @@ class UserUseCaseTest {
                 .phoneNumber("123456789")
                 .role(new Role("1","ADMIN","Description"))
                 .identityDocument("12345678")
-                .baseSalary(new BigDecimal("1000000.0"))
+                .baseSalary(1000000.0)
                 .build();
     }
 

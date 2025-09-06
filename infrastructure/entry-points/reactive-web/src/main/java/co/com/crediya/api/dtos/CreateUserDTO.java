@@ -17,6 +17,6 @@ public record CreateUserDTO(@NotBlank(message = "is required.") String name,
                              String roleName,
                             @NotNull(message = "is required.")
                             @Min( value = 1, message = "min value is 1")
-                            @Max( value = 15000000, message = "max value is 15000000")  BigDecimal baseSalary,
+                            @Max( value = 15000000, message = "max value is 15000000")  Double baseSalary,
                             @NotBlank(message = "is required.")  String password) {
 }

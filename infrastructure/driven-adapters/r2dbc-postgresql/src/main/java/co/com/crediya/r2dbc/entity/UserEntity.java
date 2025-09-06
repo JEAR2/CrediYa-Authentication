@@ -26,6 +26,6 @@ public class UserEntity {
     private String identityDocument;
     private String phoneNumber;
     private Integer roleId;
-    private BigDecimal baseSalary;
+    private Double baseSalary;
     private String password;
 }

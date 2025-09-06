@@ -49,6 +49,6 @@ adapters:
 
 security:
   jwt:
-    expiration: 3000 #3600000
+    expiration: 3600000
     public-key-location: classpath:public_key.pem
     private-key-location: classpath:private_key.pem

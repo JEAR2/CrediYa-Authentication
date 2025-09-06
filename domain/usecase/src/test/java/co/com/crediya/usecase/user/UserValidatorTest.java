@@ -33,7 +33,7 @@ class UserValidatorTest {
                 .phoneNumber("123456789")
                 .role(new Role().toBuilder().id("ROLE_ADMIN").build())
                 .identityDocument("12345678")
-                .baseSalary(new BigDecimal("1000000.0"))
+                .baseSalary(1000000.0)
                 .build();
 
 
@@ -120,7 +120,7 @@ class UserValidatorTest {
 
     @Test
     void saveUser_WhenSalaryIsZero_ShouldError() {
-        createValidUser.setBaseSalary(BigDecimal.ZERO);
+        createValidUser.setBaseSalary(0.0);
 
         StepVerifier.create(UserValidator.validateUser(createValidUser))
                 .expectError(AuthenticationIllegalArgumentException.class)
@@ -129,7 +129,7 @@ class UserValidatorTest {
 
     @Test
     void saveUser_WhenSalaryExceedsMax_ShouldError() {
-        createValidUser.setBaseSalary(new BigDecimal("15000000000000"));
+        createValidUser.setBaseSalary(15000000000000.0);
 
         StepVerifier.create(UserValidator.validateUser(createValidUser))
                 .expectError(AuthenticationIllegalArgumentException.class)
@@ -139,7 +139,7 @@ class UserValidatorTest {
 
     @Test
     void saveUser_WhenSalaryIsInvalid_ShouldError() {
-        createValidUser.setBaseSalary(new BigDecimal("-1"));
+        createValidUser.setBaseSalary(-1.0);
 
         StepVerifier.create(UserValidator.validateUser(createValidUser))
                 .expectError(AuthenticationIllegalArgumentException.class)

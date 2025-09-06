@@ -49,6 +49,7 @@ public class UserHandler {
             })
     public Mono<ServerResponse> listenSaveUser(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(CreateUserDTO.class)
+                .doOnNext( userRequest -> log.info("Saving user={}", userRequest))
                 .flatMap( validatorUtil::validate )
                 .flatMap(dto ->
                     validateRoleUseCase.findByName(dto.roleName())
@@ -60,6 +61,8 @@ public class UserHandler {
                 .flatMap(user->
                         transactionManagement.inTransaction(userUseCase.save(user))
                 )
+                .doOnSuccess(saved -> log.info("User saved successfully: {}", saved))
+                .doOnError(error -> log.error("Error saving user: {}", error.getMessage(), error))
                 .map(userDTOMapper::toResponseDTO)
                 .flatMap( savedUser ->
                         ServerResponse.created(URI.create(""))
@@ -71,16 +74,24 @@ public class UserHandler {
 
     public Mono<ServerResponse> listenFindByEmail(ServerRequest request) {
         String email = request.pathVariable("email");
-
+        log.info("Checking if user exists with email={}", email);
         return userUseCase.existsByEmail(email)
+                .doOnSuccess(exists -> log.info("User with email={} exists={}", email, exists))
+                .doOnError(ex -> log.error("Error checking user with email={} - reason={}", email, ex.getMessage(), ex))
                 .flatMap(exists -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(exists));
     }
     public Mono<ServerResponse> listenFindUserByEmail(ServerRequest request) {
         String email = request.pathVariable("email");
-
+        log.info("Searching user by email={}", email);
         return userUseCase.findByEmail(email)
+                .doOnSuccess(user ->
+                        log.info(user != null
+                                ? "Found user with email={}"
+                                : "No user found with email={}", email)
+                )
+                .doOnError(ex -> log.error("Error searching user with email={} - reason={}", email, ex.getMessage(), ex))
                 .flatMap(user -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(user));
@@ -94,6 +105,8 @@ public class UserHandler {
     public Mono<ServerResponse> login(ServerRequest request) {
         return request.bodyToMono(AuthRequestDTO.class)
                 .flatMap(dto -> loginUseCase.login(dto.getEmail(), dto.getPassword()))
+                .doOnSuccess(userLogin -> log.info("Correctly lodged: {}", userLogin))
+                .doOnError(error -> log.error("Error logging in: {}", error.getMessage(), error))
                 .flatMap(user -> jwtPort.generateToken(user.getEmail(), user.getRole().getName())
                         .map(token -> new AuthResponseDTO(user, token)))
                 .flatMap(response -> ServerResponse.ok()

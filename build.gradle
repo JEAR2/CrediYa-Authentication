@@ -35,7 +35,11 @@ sonar {
     }
 }
 
-
+tasks.named('processResources') {
+    exclude 'application*.yml'
+    exclude '**/private.key'
+    exclude '**/public.key'
+}
 
 
 apply from: './main.gradle'

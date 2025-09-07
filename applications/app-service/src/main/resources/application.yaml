@@ -1,5 +1,6 @@
 server:
   port: 8080
+  address: 0.0.0.0
 spring:
   application:
     name: "Authentication"
@@ -30,25 +31,18 @@ routes:
     userEmail: "/api/v1/users/email/{email}"
     login: "/api/v1/users/login"
 
+
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 5432
-    database: "test"
-    schema: "sm"
-    username: "sm"
-    password: "1234"
-    #url: "r2dbc:mysql://localhost:3306/users"
-    #username: root
-    #password: 1234
-    #sql:
-    #  init:
-    #    mode: always
-    #flyway:
-    #  enabled: false
+    host: ${R2DBC_HOST}
+    port: ${R2DBC_PORT}
+    database: ${R2DBC_DATABASE}
+    schema: ${R2DBC_SCHEMA}
+    username: ${R2DBC_USERNAME}
+    password: ${R2DBC_PASSWORD}
 
 security:
   jwt:
     expiration: 3600000
-    public-key-location: classpath:public_key.pem
-    private-key-location: classpath:private_key.pem
+    public-key-location: ${JWT_PUBLIC_KEY}
+    private-key-location: ${JWT_PRIVATE_KEY}

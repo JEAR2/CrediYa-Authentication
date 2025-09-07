@@ -26,5 +26,5 @@ jar {
 
 bootJar {
     // Sets output jar name
-    archiveFileName = "${project.getParent().getName()}.${archiveExtension.get()}"
+    archiveFileName.set("authentication.jar")
 }

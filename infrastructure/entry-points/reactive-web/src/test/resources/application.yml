@@ -1,0 +1,6 @@
+routes:
+  paths:
+    users: "/api/v1/users"
+    emailExists: "/api/v1/users/exists/{email}"
+    userEmail: "/api/v1/users/email/{email}"
+    login: "/api/v1/users/login"

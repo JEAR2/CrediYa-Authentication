@@ -1,7 +1,17 @@
-FROM eclipse-temurin:21-jdk-alpine
-VOLUME /tmp
-COPY *.jar Authentication.jar
-ENV JAVA_OPTS=" -Xshareclasses:name=cacheapp,cacheDir=/cache,nonfatal -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
-# Replace with a non-root user to avoid running the container with excessive privileges
-USER appuser
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS  -jar Authentication.jar" ]
+FROM eclipse-temurin:21.0.8_9-jre-alpine AS builder
+WORKDIR /builder
+COPY ./applications/app-service/build/libs/authentication.jar .
+RUN java -Djarmode=tools -jar authentication.jar extract --layers --destination extracted
+
+FROM eclipse-temurin:21.0.8_9-jre-alpine
+WORKDIR /app
+
+COPY --from=builder /builder/extracted/dependencies/ ./
+COPY --from=builder /builder/extracted/spring-boot-loader/ ./
+COPY --from=builder /builder/extracted/snapshot-dependencies/ ./
+COPY --from=builder /builder/extracted/application/ ./
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "authentication.jar"]
+

@@ -33,6 +33,6 @@ CREATE TABLE sm.users (
 -- Insertar usuario inicial
 INSERT INTO sm.users (
     name, last_name, birth_date, address, email, identity_document, phone_number, role_id, base_salary, password
-) VALUES (
-              'John', 'Acevedo', '1990-01-01', 'Calle Falsa 123', 'john.acevedo@example.com', '123456789', '3001234567', 1, 2000.00, '$2a$10$pdMHgeff/akzZzYQxGrM7.51AjdiCStuqJBofK.qBAxGkLIIJZ0Sm'
-         );
+) VALUES ( 'John', 'Acevedo', '1990-01-01', 'Calle Falsa 123', 'brayanix27@gmail.com', '123456789', '3001234567', 1, 2000.00, '$2a$10$pdMHgeff/akzZzYQxGrM7.51AjdiCStuqJBofK.qBAxGkLIIJZ0Sm'),
+( 'John', 'Acevedo', '1990-01-01', 'Calle Falsa 123', 'jhedacro@gmail.com', '123456789', '3001234567', 3, 2000.00, '$2a$10$pdMHgeff/akzZzYQxGrM7.51AjdiCStuqJBofK.qBAxGkLIIJZ0Sm');
+

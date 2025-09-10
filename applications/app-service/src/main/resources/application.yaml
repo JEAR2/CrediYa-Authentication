@@ -44,5 +44,5 @@ adapters:
 security:
   jwt:
     expiration: 3600000
-    public-key-location: ${JWT_PUBLIC_KEY}
-    private-key-location: ${JWT_PRIVATE_KEY}
+    public-key-location: file:${JWT_PUBLIC_KEY}
+    private-key-location:  file:${JWT_PRIVATE_KEY}

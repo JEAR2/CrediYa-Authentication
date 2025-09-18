@@ -33,15 +33,12 @@ public class SecurityConfigAuth {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.POST, "/api/v1/users/login").permitAll()
-                        .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui.html/**", "/webjars/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ADVISER")
+                        .pathMatchers(HttpMethod.POST, "/auth/api/v1/users/login").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/auth/actuator/health").permitAll()
+                        .pathMatchers("/auth/v3/api-docs/**", "/auth/swagger-ui/**", "/auth/swagger-ui.html", "/auth/swagger-ui.html/**", "/auth/webjars/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/auth/api/v1/users").hasAnyRole("ADMIN", "ADVISER")
                         .anyExchange().authenticated()
                 )
-                /*.exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler(accessDeniedExceptionHandler)
-                        .authenticationEntryPoint(unauthorizedExceptionHandler)
-                )*/
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(grantedAuthoritiesExtractor()))
                                 .authenticationEntryPoint(unauthorizedExceptionHandler)

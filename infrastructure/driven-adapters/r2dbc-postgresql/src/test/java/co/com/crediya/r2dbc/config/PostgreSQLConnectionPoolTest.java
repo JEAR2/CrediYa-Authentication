@@ -32,6 +32,6 @@ class PostgreSQLConnectionPoolTest {
 
     @Test
     void getConnectionConfigSuccess() {
-        assertNotNull(connectionPool.getConnectionConfig(properties));
+        assertNotNull(connectionPool.connectionFactory(properties));
     }
 }

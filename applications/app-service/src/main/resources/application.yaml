@@ -1,20 +1,18 @@
 server:
   port: 8080
-  address: 0.0.0.0
+  servlet:
+    context-path: /auth
 spring:
   application:
     name: "Authentication"
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: "/h2"
   profiles:
     include: null
 management:
   endpoints:
     web:
+      base-path: /auth/actuator
       exposure:
         include: "health,prometheus"
   endpoint:
@@ -26,23 +24,31 @@ cors:
 
 routes:
   paths:
-    users: "/api/v1/users"
-    emailExists: "/api/v1/users/exists/{email}"
-    userEmail: "/api/v1/users/email/{email}"
-    login: "/api/v1/users/login"
+    users: "/auth/api/v1/users"
+    emailExists: "/auth/api/v1/users/exists/{email}"
+    userEmail: "/auth/api/v1/users/email/{email}"
+    login: "/auth/api/v1/users/login"
 
+springdoc:
+  swagger-ui:
+    path: /auth/swagger-ui
+  api-docs:
+    path: /auth/v3/api-docs
+  packages-to-scan:
+    - co.com.crediya
+  paths-to-match:
+    - /**
 
 adapters:
   r2dbc:
     host: ${R2DBC_HOST}
     port: ${R2DBC_PORT}
     database: ${R2DBC_DATABASE}
-    schema: ${R2DBC_SCHEMA}
+    schema: ${R2DBC_SCHEMA:public}
     username: ${R2DBC_USERNAME}
     password: ${R2DBC_PASSWORD}
-
 security:
   jwt:
     expiration: 3600000
-    public-key-location: file:${JWT_PUBLIC_KEY}
-    private-key-location:  file:${JWT_PRIVATE_KEY}
+    public-key-location: ${JWT_PUBLIC_KEY}
+    private-key-location:  ${JWT_PRIVATE_KEY}

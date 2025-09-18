@@ -16,7 +16,7 @@ INSERT INTO sm.role (role_id, name, description) VALUES
                                                      (4, 'CLIENT', 'Usuario cleinte');
 
 -- Crear tabla users
-CREATE TABLE sm.users (
+CREATE TABLE users (
                           user_id SERIAL PRIMARY KEY,
                           name VARCHAR(100),
                           last_name VARCHAR(100),
@@ -31,7 +31,7 @@ CREATE TABLE sm.users (
 );
 
 -- Insertar usuario inicial
-INSERT INTO sm.users (
+INSERT INTO users (
     name, last_name, birth_date, address, email, identity_document, phone_number, role_id, base_salary, password
 ) VALUES ( 'John', 'Acevedo', '1990-01-01', 'Calle Falsa 123', 'brayanix27@gmail.com', '123456789', '3001234567', 1, 2000000.00, '$2a$10$pdMHgeff/akzZzYQxGrM7.51AjdiCStuqJBofK.qBAxGkLIIJZ0Sm'),
 ( 'John', 'Acevedo', '1990-01-01', 'Calle Falsa 123', 'jhedacro@hotmail.com', '123456789', '3001234567', 3, 2000000.00, '$2a$10$pdMHgeff/akzZzYQxGrM7.51AjdiCStuqJBofK.qBAxGkLIIJZ0Sm'),

@@ -5,15 +5,11 @@ import co.com.crediya.security.enums.SecurityConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -22,16 +18,16 @@ import java.util.Base64;
 public class JwtKeyConfig {
 
     @Value("${security.jwt.private-key-location}")
-    private Resource privateKeyResource;
+    private String privateKeyResource;
 
     @Value("${security.jwt.public-key-location}")
-    private Resource publicKeyResource;
+    private String publicKeyResource;
 
     @Bean
     public Mono<PrivateKey> privateKey() {
 
         return  Mono.fromCallable( () -> {
-                    String key = new String( privateKeyResource.getInputStream().readAllBytes() )
+                    String key = privateKeyResource
                             .replaceAll(SecurityConstants.REGEX_START_PRIVATE_KEY.getValue(), "")
                             .replaceAll(SecurityConstants.REGEX_END_PRIVATE_KEY.getValue(), "")
                             .replaceAll(SecurityConstants.REGEX_SPACES.getValue(), "");
@@ -46,7 +42,7 @@ public class JwtKeyConfig {
     @Bean
     public Mono<PublicKey> publicKey(){
         return  Mono.fromCallable( () -> {
-                    String key = new String( publicKeyResource.getInputStream().readAllBytes() )
+                    String key = publicKeyResource
                             .replaceAll(SecurityConstants.REGEX_START_PUBLIC_KEY.getValue(), "")
                             .replaceAll(SecurityConstants.REGEX_END_PUBLIC_KEY.getValue(), "")
                             .replaceAll(SecurityConstants.REGEX_SPACES.getValue(), "");
